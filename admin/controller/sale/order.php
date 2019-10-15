@@ -3,8 +3,7 @@
 require_once(DIR_STORAGE . 'vendor/autoload.php');
 
 use Flagship\Shipping\Flagship;
-// define('SMARTSHIP_API_URL','http://127.0.0.1:3002');
-// define('SMARTSHIP_WEB_URL','http://127.0.0.1:3006');
+use Flagship\Shipping\Exceptions\PackingException;
 
 class ControllerSaleOrder extends Controller {
 	private $error = array();
@@ -1998,11 +1997,12 @@ class ControllerSaleOrder extends Controller {
 		}
 
 		$packages = [
-			"items" => $items,
+			"items" => $this->getPackingPackages($items),
 			"units" => 'imperial',
 		    "type" => "package",
 		    "content" => "goods",
 		];
+
 		return $packages;
 	}
 
@@ -2013,11 +2013,56 @@ class ControllerSaleOrder extends Controller {
 		$imperialWeightClass = $this->model_extension_shipping_flagship->getImperialWeightClass();
 		$orderProduct = $this->model_catalog_product->getProduct($product["product_id"]);
 
-		for($i=1; $i<= $product["quantity"]; $i++){
+		for($i = 1; $i <= $product["quantity"]; $i++){
 			$items[] = $this->getItemDetails($orderProduct,$imperialLengthClass,$imperialWeightClass);
 		}
 
 		return $items;
+	}
+
+	protected function getAllBoxes() : array {
+		$this->load->model('extension/shipping/flagship');
+		$boxes = $this->model_extension_shipping_flagship->getAllBoxes();
+        for($i=0;$i<count($boxes);$i++){
+        	unset($boxes[$i]['id']);
+        }
+        return $boxes;
+	}
+
+	protected function getPackingPayload(array $items) : array {
+
+		$boxes = $this->getAllBoxes();
+		$units = 'imperial';
+
+		$packingPayload = [
+			'items' => $items,
+			'boxes' => $boxes,
+			'units' => $units
+		];
+		return $packingPayload;
+	}
+
+	protected function getPackingPackages(array $items) : ?array {
+		$flagship = new Flagship($this->config->get('shipping_flagship_token'), $this->config->get('smartship_api_url'), 'OpenCart', '1.0.0');
+		$payload = $this->getPackingPayload($items);
+		try{
+			$packings = $flagship->packingRequest($payload)->execute();
+
+			$packingPackages = [];
+			foreach ($packings as $packing) {
+				$packingPackages[] = [
+					'length' => $packing->getLength(),
+					'width' => $packing->getWidth(),
+					'height' => $packing->getHeight(),
+					'weight' => $packing->getWeight(),
+					'description' => $packing->getBoxModel()
+				];
+			}
+			return $packingPackages;
+		} catch(PackingException $e){
+			$this->session->data['error'] = $e->getMessage();
+			return null;
+		}
 	}
 
 	protected function getItemDetails(array $orderProduct,int $imperialLengthClass,int $imperialWeightClass) : array {

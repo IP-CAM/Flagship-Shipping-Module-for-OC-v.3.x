@@ -8,12 +8,12 @@ class ModelExtensionShippingFlagship extends Model{
                                     AND table_schema = '".DB_DATABASE."'
                                     AND column_name = 'flagship_shipment_id'");
         if($query == 0)
-            $this->db->query("ALTER TABLE ".DB_PREFIX."order ADD COLUMN flagship_shipment_id INT(10)");
+            $this->db->query("ALTER TABLE `".DB_PREFIX."order` ADD COLUMN `flagship_shipment_id` INT(10)");
         return 0;
     }
 
     public function updateFlagshipShipmentId(int $flagship_shipment_id,int $order_id) : int {
-        $this->db->query("UPDATE ".DB_PREFIX."order SET flagship_shipment_id=".$flagship_shipment_id." WHERE order_id=".$order_id);
+        $this->db->query("UPDATE `".DB_PREFIX."order` SET `flagship_shipment_id` =".$flagship_shipment_id." WHERE `order_id`=".$order_id);
         return 0;
     }
 
@@ -38,10 +38,40 @@ class ModelExtensionShippingFlagship extends Model{
         return $query->row['weight_class_id'];
     }
 
-
     public function isFlagshipInstalled() : int {
         $query = $this->db->query("SELECT `code` FROM ".DB_PREFIX."extension WHERE `code` = 'flagship'");
         return count($query->rows);
     }
 
+    public function createFlagshipBoxesTable() : bool {
+        $query = $this->db->query("
+                CREATE TABLE IF NOT EXISTS `".DB_PREFIX."flagship_boxes` (
+                    `id` INT(2) UNSIGNED NOT NULL AUTO_INCREMENT,
+                    `box_model` VARCHAR(25) NULL DEFAULT 'NULL',
+                    `length` INT(2) UNSIGNED NOT NULL DEFAULT '1',
+                    `width` INT(2) UNSIGNED NOT NULL DEFAULT '1',
+                    `height` INT(2) UNSIGNED NOT NULL DEFAULT '1',
+                    `weight` INT(2) UNSIGNED NOT NULL DEFAULT '1',
+                    `max_weight` INT(2) UNSIGNED NOT NULL DEFAULT '1',
+                    PRIMARY KEY (`id`)
+                )
+            ");
+        return true;
+    }
+
+    public function addBox(array $box) : bool {
+        $query = $this->db->query("
+                INSERT INTO `".DB_PREFIX."flagship_boxes` SET box_model = '".$box['box_model']."', length = ".$box['length'].", width = ".$box['width'].", height = ".$box['height'].", weight = ".$box['weight'].", max_weight = ".$box['max_weight']);
+        return true;
+    }
+
+    public function getAllBoxes() : array {
+        $query = $this->db->query("SELECT * from ".DB_PREFIX."flagship_boxes");
+        return $query->rows;
+    }
+
+    public function deleteBox($id) : int {
+        $query = $this->db->query("Delete from ".DB_PREFIX."flagship_boxes WHERE `id` = ".$id);
+        return 0;
+    }
 }

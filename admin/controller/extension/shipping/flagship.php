@@ -15,11 +15,16 @@ class ControllerExtensionShippingFlagship extends Controller {
 
         $this->load->model('setting/setting');
         $this->load->model('extension/shipping/flagship');
+        $this->model_extension_shipping_flagship->createFlagshipBoxesTable();
 
-        //set smartship URLs here        
+        //set smartship URLs here
         if(empty($this->config->get('smartship_api_url'))){
             $this->model_extension_shipping_flagship->addUrls();
         }
+
+        $allBoxes = $this->model_extension_shipping_flagship->getAllBoxes();
+        $data["boxes_count"] = count($allBoxes);
+        $data["boxes"] = $allBoxes;
 
         $data['token_set'] = $this->isTokenSet();
 
@@ -28,6 +33,7 @@ class ControllerExtensionShippingFlagship extends Controller {
         }
 
         if (($this->request->server['REQUEST_METHOD'] == 'POST') && $this->validate()) {
+
             $this->model_setting_setting->editSetting('shipping_flagship', $this->request->post);
             $this->model_extension_shipping_flagship->addUrls();
 
@@ -60,43 +66,39 @@ class ControllerExtensionShippingFlagship extends Controller {
         );
 
         $data['action'] = $this->url->link('extension/shipping/flagship', 'user_token=' . $this->session->data['user_token'], true);
+        $data['action_boxes'] = $this->url->link('extension/shipping/flagship/boxes', 'user_token=' . $this->session->data['user_token'], true);
+        $data['action_delete_box'] = $this->url->link('extension/shipping/flagship/deleteBox', 'user_token=' . $this->session->data['user_token'], true);
 
         $data['cancel'] = $this->url->link('marketplace/extension', 'user_token=' . $this->session->data['user_token'] . '&type=shipping', true);
+        $data['shipping_flagship_token'] = $this->config->get('shipping_flagship_token');
+        $data['shipping_flagship_postcode'] = empty($this->config->get('shipping_flagship_postcode')) ? 'H9R5P9' : $this->config->get('shipping_flagship_postcode');
+        $data['shipping_flagship_status'] = $this->config->get('shipping_flagship_status');
+        $data['shipping_flagship_fee'] = empty($this->config->get('shipping_flagship_fee')) ? 0 : $this->config->get('shipping_flagship_fee');
+        $data['shipping_flagship_markup'] = empty($this->config->get('shipping_flagship_markup')) ? 0 : $this->config->get('shipping_flagship_markup');
+        $data['shipping_flagship_sort_order'] = $this->config->get('shipping_flagship_sort_order');
 
         if (isset($this->request->post['shipping_flagship_postcode'])) {
             $data['shipping_flagship_postcode'] = $this->request->post['shipping_flagship_postcode'];
-        } else {
-            $data['shipping_flagship_postcode'] = empty($this->config->get('shipping_flagship_postcode')) ? 'H9R5P9' : $this->config->get('shipping_flagship_postcode');
         }
 
         if (isset($this->request->post['shipping_flagship_token'])) {
             $data['shipping_flagship_token'] = $this->request->post['shipping_flagship_token'];
-        } else {
-            $data['shipping_flagship_token'] = $this->config->get('shipping_flagship_token');
         }
 
         if (isset($this->request->post['shipping_flagship_status'])) {
             $data['shipping_flagship_status'] = $this->request->post['shipping_flagship_status'];
-        } else {
-            $data['shipping_flagship_status'] = $this->config->get('shipping_flagship_status');
         }
 
         if (isset($this->request->post['shipping_flagship_fee'])) {
             $data['shipping_flagship_fee'] = $this->request->post['shipping_flagship_fee'];
-        } else {
-            $data['shipping_flagship_fee'] = empty($this->config->get('shipping_flagship_fee')) ? 0 : $this->config->get('shipping_flagship_fee');
         }
 
         if (isset($this->request->post['shipping_flagship_markup'])) {
             $data['shipping_flagship_markup'] = $this->request->post['shipping_flagship_markup'];
-        } else {
-            $data['shipping_flagship_markup'] = empty($this->config->get('shipping_flagship_markup')) ? 0 : $this->config->get('shipping_flagship_markup');
         }
 
         if (isset($this->request->post['shipping_flagship_sort_order'])) {
             $data['shipping_flagship_sort_order'] = $this->request->post['shipping_flagship_sort_order'];
-        } else {
-            $data['shipping_flagship_sort_order'] = $this->config->get('shipping_flagship_sort_order');
         }
 
         $data['error'] = $this->error;
@@ -105,6 +107,19 @@ class ControllerExtensionShippingFlagship extends Controller {
         $data['footer'] = $this->load->controller('common/footer');
 
         $this->response->setOutput($this->load->view('extension/shipping/flagship', $data));
+    }
+
+    public function boxes(){
+        $this->load->model('extension/shipping/flagship');
+        $this->model_extension_shipping_flagship->addBox($this->request->post);
+        $this->response->redirect($this->url->link('extension/shipping/flagship', 'user_token=' . $this->session->data['user_token'], true));
+    }
+
+    public function deleteBox(){
+        $id = $this->request->get['id'];
+        $this->load->model('extension/shipping/flagship');
+        $this->model_extension_shipping_flagship->deleteBox($id);
+        $this->response->redirect($this->url->link('extension/shipping/flagship', 'user_token=' . $this->session->data['user_token'], true));
     }
 
     protected function validate() : bool {
@@ -116,10 +131,8 @@ class ControllerExtensionShippingFlagship extends Controller {
             $this->error['shipping_flagship_token'] = true;
         }
         if(utf8_strlen($this->request->post['shipping_flagship_token']) && $this->validateToken($this->request->post['shipping_flagship_token'])){
-
             $this->error['token_validation'] = true;
         }
-
         if (!utf8_strlen($this->request->post['shipping_flagship_fee'])) {
             $this->error['shipping_flagship_fee'] = true;
         }

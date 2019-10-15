@@ -14,6 +14,7 @@ Edit FlagShip
 
 Enter your FlagShip token, flat handling fee, percentage markup to be added to shipments.
 Enable the extension and set a sort order.
+If you use certain shipping boxes, you can add their dimensions here.
 
 ##Usage
 Be sure to set details for your store.
@@ -28,4 +29,3 @@ Your customers will now see FlagShip shipping rates when choosing a shipping met
 You can Ship all your orders with FlagShip
 
 ![Send To FlagShip](https://github.com/flagshipcompany/flagship-for-opencart/blob/master/screenshots/sendToFlagShip.jpg)
-
