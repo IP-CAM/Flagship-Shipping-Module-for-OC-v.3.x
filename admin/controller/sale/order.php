@@ -2029,10 +2029,14 @@ class ControllerSaleOrder extends Controller {
         return $boxes;
 	}
 
-	protected function getPackingPayload(array $items) : array {
+	protected function getPackingPayload(array $items) : ?array {
 
 		$boxes = $this->getAllBoxes();
 		$units = 'imperial';
+
+		if(count($boxes) == 0){
+			return NULL;
+		}
 
 		$packingPayload = [
 			'items' => $items,
@@ -2045,6 +2049,19 @@ class ControllerSaleOrder extends Controller {
 	protected function getPackingPackages(array $items) : ?array {
 		$flagship = new Flagship($this->config->get('shipping_flagship_token'), $this->config->get('smartship_api_url'), 'OpenCart', '1.0.0');
 		$payload = $this->getPackingPayload($items);
+
+		if($payload == NULL){
+			return [
+				[
+					'length' => 1,
+					'width' => 1,
+					'height' => 1,
+					'weight' => 1,
+					'description' => 'Item 1'
+				]
+			];
+		}
+
 		try{
 			$packings = $flagship->packingRequest($payload)->execute();
 

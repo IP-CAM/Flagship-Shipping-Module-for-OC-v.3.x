@@ -106,7 +106,7 @@
                         <div class="row">
                             <div class="col-sm-3">
                                 <a href="{{ action_delete_box }}&id={{ box.id }}" >
-                                <i class="fa fa-trash" style="font-size:15px; color:red;"></i>
+                                <i class="fa fa-trash" style="font-size:15px; color:red;" data-toggle="tooltip" title="Delete Box"></i>
                                 </a>
                                 <strong>{{ box.box_model }}</strong> : {{ box.length }} x {{ box.width }} x {{ box.height }} x {{ box.weight }} <strong>Max Weight</strong> : {{ box.max_weight }}
                             </div>
