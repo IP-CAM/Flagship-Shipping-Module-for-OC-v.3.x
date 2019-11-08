@@ -4,7 +4,23 @@ Navigate to your OpenCart `ROOT` directory
 ````
 composer require flagshipcompany/flagship-api-sdk:^1.1
 ````
-Download admin and catalog folders to `OpenCart ROOT/upload` directory
+Move storage folder from `upload/system/storage` to OpenCart `ROOT`
+
+If you had already moved storage folder to OpenCart `ROOT`, change vendor directory path in composer.json and run 
+````
+composer require flagshipcompany/flagship-api-sdk:^1.1
+````
+
+Alternatively, you can download flagship-api-sdk from [here](https://github.com/flagshipcompany/flagship-api-sdk) and unzip the contents to storage/vendor/flagshipcompany
+
+To install the extension, navigate to Admin > Extensions > Installer
+
+Upload flagship.ocmod.zip
+
+Refresh modifictaions from the top right corner on Modifications page ( Admin > Extensions > Modifications )
+
+Refresh cache from Dashboard > Settings (Gear icon in the top right corner)
+
 Navigate to Admin > Extensions > Extensions > Shipping
 Install FlagShip Shipping
 ![Install FlagShip](https://github.com/flagshipcompany/flagship-for-opencart/blob/master/screenshots/installFlagShip.jpg)
