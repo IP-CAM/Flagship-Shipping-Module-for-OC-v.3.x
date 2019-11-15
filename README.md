@@ -12,6 +12,7 @@ composer require flagshipcompany/flagship-api-sdk:^1.1
 ````
 
 Alternatively, you can download flagship-api-sdk from [here](https://github.com/flagshipcompany/flagship-api-sdk) and unzip the contents to storage/vendor/flagshipcompany
+(Note that this would require `composer install`)
 
 To install the extension, navigate to Admin > Extensions > Installer
 
