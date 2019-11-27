@@ -1,4 +1,6 @@
 # flagship-for-opencart
+## Requirements
+PHP 7.1 and above
 ## Installation
 Navigate to your OpenCart `ROOT` directory
 ````
