@@ -36,7 +36,7 @@ Enable the extension and set a sort order.
 If you use certain shipping boxes, you can add their dimensions here.
 
 Select Couriers
-![Select Couriers] (https://github.com/flagshipcompany/flagship-for-opencart/blob/master/screenshots/selectCouriers.jpg)
+![Select Couriers](https://github.com/flagshipcompany/flagship-for-opencart/blob/master/screenshots/selectCouriers.jpg)
 
 ## Usage
 Be sure to set details for your store.
