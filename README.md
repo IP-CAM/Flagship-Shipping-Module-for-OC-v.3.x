@@ -7,6 +7,7 @@ Download FlagShip For Opencart. Extract flagship.ocmod.zip.
 To install the extension, navigate to Admin > Extensions > Installer
 
 Upload flagship.ocmod.zip
+![Upload FlagShip](https://github.com/flagshipcompany/flagship-for-opencart/blob/master/screenshots/uploadFlagShip.jpg)
 
 Refresh modifictaions from the top right corner on Modifications page ( Admin > Extensions > Modifications )
 
