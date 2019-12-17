@@ -2,19 +2,7 @@
 ## Requirements
 PHP 7.1 and above
 ## Installation
-Navigate to your OpenCart `ROOT` directory
-````
-composer require flagshipcompany/flagship-api-sdk:^1.1
-````
-Move storage folder from `upload/system/storage` to OpenCart `ROOT`
-
-If you had already moved storage folder to OpenCart `ROOT`, change vendor directory path in composer.json and run 
-````
-composer require flagshipcompany/flagship-api-sdk:^1.1
-````
-
-Alternatively, you can download flagship-api-sdk from [here](https://github.com/flagshipcompany/flagship-api-sdk) and unzip the contents to storage/vendor/flagshipcompany
-(Note that this would require `composer install`)
+Download FlagShip For Opencart. Extract flagship.ocmod.zip.
 
 To install the extension, navigate to Admin > Extensions > Installer
 
