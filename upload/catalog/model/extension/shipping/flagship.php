@@ -111,7 +111,7 @@ class ModelExtensionShippingflagship extends Model {
             "is_commercial" => false
         ];
         $packages = [
-            "items" => $this->getPackageItems(),
+            "items" => $this->config->get('shipping_flagship_packing') == 1 ? $this->getPackageItems() : $this->getItems(),
             "units"=> 'imperial',
             "type"=>"package",
             "content"=>"goods"
@@ -128,7 +128,7 @@ class ModelExtensionShippingflagship extends Model {
             "packages" => $packages,
             "payment" => $payment,
             "options" => $options
-        ];
+        ];       
         return $payload;
     }
     protected function getPackageItems() : array {
@@ -174,7 +174,7 @@ class ModelExtensionShippingflagship extends Model {
             "items" => $items,
             "boxes" => $boxes,
             "units" => 'imperial'
-        ];
+        ];     
         $packings = $this->packingRequest($packingPayload);
         return $packings;
     }

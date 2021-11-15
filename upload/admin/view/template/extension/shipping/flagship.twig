@@ -90,6 +90,22 @@
                         </div>
                     </div>
                     <div class="form-group">
+                        <label class="col-sm-2 control-label" for="input-packing">{{ entry_packing }} </label>
+                        <div class="col-sm-10"> 
+                            <select name="shipping_flagship_packing" id="input-packing" class="form-control">
+                                {% if shipping_flagship_packing %}
+                                <option value="1" selected="selected">{{ text_enabled }}</option>
+                                <option value="0">{{ text_disabled }}</option>
+                                {% else %}
+                                <option value="1">{{ text_enabled }}</option>
+                                <option value="0" selected="selected">{{ text_disabled }}</option>
+                                {% endif %}
+                            </select>
+                            <p>Enabling the API will automatically box the items in the set boxes and give a quote</p>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
                         <label class="col-sm-2 control-label" for="input-status">{{ entry_status }} </label>
                         <div class="col-sm-10">
                             <select name="shipping_flagship_status" id="input-status" class="form-control">

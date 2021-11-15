@@ -69,6 +69,7 @@ class ControllerExtensionShippingflagship extends Controller {
 
         $data['shipping_flagship_postcode'] = empty($this->config->get('shipping_flagship_postcode')) ? 'H9R5P9' : $this->config->get('shipping_flagship_postcode');
         $data['shipping_flagship_status'] = $this->config->get('shipping_flagship_status');
+        $data['shipping_flagship_packing'] = $this->config->get('shipping_flagship_packing');
         $data['shipping_flagship_fee'] = empty($this->config->get('shipping_flagship_fee')) ? 0 : $this->config->get('shipping_flagship_fee');
         $data['shipping_flagship_markup'] = empty($this->config->get('shipping_flagship_markup')) ? 0 : $this->config->get('shipping_flagship_markup');
         $data['shipping_flagship_sort_order'] = $this->config->get('shipping_flagship_sort_order');
@@ -90,6 +91,9 @@ class ControllerExtensionShippingflagship extends Controller {
         }
         if (isset($this->request->post['shipping_flagship_status'])) {
             $data['shipping_flagship_status'] = $this->request->post['shipping_flagship_status'];
+        }
+        if (isset($this->request->post['shipping_flagship_packing'])) {
+            $data['shipping_flagship_packing'] = $this->request->post['shipping_flagship_packing'];
         }
         if (isset($this->request->post['shipping_flagship_fee'])) {
             $data['shipping_flagship_fee'] = $this->request->post['shipping_flagship_fee'];
@@ -253,7 +257,7 @@ class ControllerExtensionShippingflagship extends Controller {
             $items = $this->getItems($product,$items);
         }
         $packages = [
-            "items" => $this->getPackingPackages($items),
+            "items" => $this->config->get('shipping_flagship_packing') == 1 ? $this->getPackingPackages($items) : $items,
             "units" => 'imperial',
             "type" => "package",
             "content" => "goods",
