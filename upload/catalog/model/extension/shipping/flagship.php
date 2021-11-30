@@ -192,13 +192,15 @@ class ModelExtensionShippingflagship extends Model {
         $imperialLengthClass = $this->getImperialLengthClass();
         $imperialWeightClass = $this->getImperialWeightClass();
         foreach ($products as $product) {
-            $items[] = [
-                "length" => $product["length"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["length"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["length"]) ),
-                "width" => $product["width"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["width"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["width"])),
-                "height" => $product["height"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["height"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["height"])),
-                "weight" => $product["weight"] < 1 ? 1 : ($product['weight_class_id'] != $imperialWeightClass ? $this->weight->convert($product["weight"],$product['weight_class_id'],$imperialWeightClass) : $product["weight"]),
-                "description" => $product["name"]
-            ];
+            for($i=0; $i < $product['quantity']; $i++){
+		$items[] = [
+			"length" => $product["length"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["length"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["length"]) ),
+			"width" => $product["width"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["width"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["width"])),
+			"height" => $product["height"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["height"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["height"])),
+			"weight" => $product["weight"] < 1 ? 1 : ($product['weight_class_id'] != $imperialWeightClass ? $this->weight->convert($product["weight"],$product['weight_class_id'],$imperialWeightClass) : $product["weight"]/$product['quantity']),
+			"description" => $product["name"]
+	    	];	
+            }	
         }
         return $items;
     }
