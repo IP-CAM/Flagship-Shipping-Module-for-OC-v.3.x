@@ -1,12 +1,12 @@
 <?php
 
 class ControllerExtensionShippingflagship extends Controller {
-	private $error = array();
+    private $error = array();
 
     public function install() {
         $this->load->model('extension/shipping/flagship');
         $this->model_extension_shipping_flagship->createFlagshipBoxesTable();
-		$this->model_extension_shipping_flagship->createCouriersTable();
+        $this->model_extension_shipping_flagship->createCouriersTable();
         $this->model_extension_shipping_flagship->createFlagshipShipmentsTable();
     }
 
@@ -73,10 +73,10 @@ class ControllerExtensionShippingflagship extends Controller {
         $data['shipping_flagship_fee'] = empty($this->config->get('shipping_flagship_fee')) ? 0 : $this->config->get('shipping_flagship_fee');
         $data['shipping_flagship_markup'] = empty($this->config->get('shipping_flagship_markup')) ? 0 : $this->config->get('shipping_flagship_markup');
         $data['shipping_flagship_sort_order'] = $this->config->get('shipping_flagship_sort_order');
-		$data['shipping_flagship_residential'] = $this->config->get('shipping_flagship_residential');
-		$data['show_couriers'] = $this->isTokenSet();
-		$data['couriers'] = $this->getAvailableServices();
-		$data['action_couriers'] = $this->url->link('extension/shipping/flagship/couriers', 'user_token=' . $this->session->data['user_token'], true);
+        $data['shipping_flagship_residential'] = $this->config->get('shipping_flagship_residential');
+        $data['show_couriers'] = $this->isTokenSet();
+        $data['couriers'] = $this->getAvailableServices();
+        $data['action_couriers'] = $this->url->link('extension/shipping/flagship/couriers', 'user_token=' . $this->session->data['user_token'], true);
         $data['test_token_check'] = $this->checkIfTokenIsTestToken();
 
 
@@ -104,9 +104,9 @@ class ControllerExtensionShippingflagship extends Controller {
         if (isset($this->request->post['shipping_flagship_sort_order'])) {
             $data['shipping_flagship_sort_order'] = $this->request->post['shipping_flagship_sort_order'];
         }
-		if(isset($this->request->post['shipping_flagship_residential'])) {
-			$data['shipping_flagship_residential'] = $this->request->post['shipping_flagship_residential'];
-		}
+        if(isset($this->request->post['shipping_flagship_residential'])) {
+            $data['shipping_flagship_residential'] = $this->request->post['shipping_flagship_residential'];
+        }
 
         $data['error'] = $this->error;
         $data['header'] = $this->load->controller('common/header');
@@ -134,27 +134,27 @@ class ControllerExtensionShippingflagship extends Controller {
     /*
      * Mixed return type
      */
-	public function couriers(){
+    public function couriers(){
 
-		$selectedCouriers = isset($this->request->post["shipping_flagship_couriers"]) ? implode(",",$this->request->post["shipping_flagship_couriers"]) : '' ;
-		$this->load->model('extension/shipping/flagship');
+        $selectedCouriers = isset($this->request->post["shipping_flagship_couriers"]) ? implode(",",$this->request->post["shipping_flagship_couriers"]) : '' ;
+        $this->load->model('extension/shipping/flagship');
         if($this->model_extension_shipping_flagship->areCouriersSet() === TRUE){
 
             $this->model_extension_shipping_flagship->updateCouriers($selectedCouriers);
             return $this->response->redirect($this->url->link('extension/shipping/flagship', 'user_token=' . $this->session->data['user_token'], true));
         }
 
-		$this->model_extension_shipping_flagship->saveCouriers($selectedCouriers);
+        $this->model_extension_shipping_flagship->saveCouriers($selectedCouriers);
 
-		$this->session->data['success'] = 'Couriers Saved';
-		$this->response->redirect($this->url->link('extension/shipping/flagship', 'user_token=' . $this->session->data['user_token'], true));
-	}
+        $this->session->data['success'] = 'Couriers Saved';
+        $this->response->redirect($this->url->link('extension/shipping/flagship', 'user_token=' . $this->session->data['user_token'], true));
+    }
 
-	public function prepareshipment() : int {
+    public function prepareshipment() : int {
         $order_id = $this->request->get['order_id'];
         $payload = $this->getPayload($order_id);
         $orderLink = $this->url->link('sale/order/info', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$order_id, true);
-        $this->load->model('extension/shipping/flagship');
+        $this->load->model('extension/shipping/flagship');        
         $shipment = $this->model_extension_shipping_flagship->prepareShipment($payload,$order_id,$orderLink);
         $this->model_extension_shipping_flagship->updateFlagshipShipmentId($shipment->id,$order_id,$shipment->status);
 
@@ -194,7 +194,7 @@ class ControllerExtensionShippingflagship extends Controller {
         $this->load->model('extension/shipping/flagship');
         $this->model_extension_shipping_flagship->deleteBox($id);
         $this->response->redirect($this->url->link('extension/shipping/flagship', 'user_token=' . $this->session->data['user_token'], true));
-		return 0;
+        return 0;
     }
 
     protected function getFlagshipShipmentId() : int {
@@ -208,8 +208,8 @@ class ControllerExtensionShippingflagship extends Controller {
         $this->load->model('sale/order');
         $order_info = $this->model_sale_order->getOrder($order_id);
         $from = [
-            "name" => $this->config->get('config_name'),
-            "attn" => $this->config->get('config_name'),
+            "name" => substr($this->config->get('config_name'),0,29),
+            "attn" => substr($this->config->get('config_owner'),0,20),
             "address" => substr($this->config->get('config_address'),0,stripos($this->config->get('config_address'),"\r\n")) == "" ? substr($this->config->get('config_address'),0,28) : substr(substr($this->config->get('config_address'),0,stripos($this->config->get('config_address'),"\r\n")),0,28),
             "suite" => "",
             "city" => "Toronto",
@@ -218,16 +218,33 @@ class ControllerExtensionShippingflagship extends Controller {
             "postal_code" => $this->config->get('shipping_flagship_postcode'),
             "phone" => $this->config->get('config_telephone')
         ];
-        $toName = $order_info["shipping_firstname"] == NULL ? ($order_info["payment_company"] == NULL ? $order_info["payment_firstname"].' '.$order_info["payment_lastname"] : $order_info["payment_company"]) : ($order_info["shipping_company"] == NULL ? $order_info["shipping_firstname"].' '.$order_info["shipping_lastname"] : $order_info["shipping_company"]);
+
+        $toName = $order_info["shipping_company"] == NULL ? 
+                    ($order_info["payment_company"] != NULL ? 
+                        $order_info["payment_company"] : 
+                        ($order_info["shipping_firstname"] == NULL ? 
+                            $order_info['payment_firstname'].' '.$order_info['payment_lastname'] : 
+                            $order_info["shipping_firstname"].' '.$order_info["shipping_lastname"])) : 
+                        $order_info["shipping_company"];
+        $toAttn = $order_info["shipping_firstname"] == NULL ? 
+                    $order_info["payment_firstname"].' '.$order_info["payment_lastname"] : 
+                    $order_info["shipping_firstname"].' '.$order_info["shipping_lastname"];
+        $toAddress = $order_info["shipping_address_1"] == NULL ? $order_info["payment_address_1"] : $order_info["shipping_address_1"];
+        $toSuite = $order_info["shipping_address_2"] == NULL ? $order_info["payment_address_2"] : $order_info["shipping_address_2"];
+        $toCity = $order_info["shipping_city"] == NULL ? $order_info["payment_city"] : $order_info["shipping_city"];
+        $toCountry = $order_info["shipping_iso_code_2"] == NULL ? $order_info["payment_iso_code_2"] : $order_info["shipping_iso_code_2"];
+        $toState = $order_info["shipping_zone_code"] == NULL ? $order_info["payment_zone_code"] : $order_info["shipping_zone_code"];
+        $toPostalCode = $order_info["shipping_postcode"] == NULL ? $order_info["payment_postcode"] : $order_info["shipping_postcode"];
+
         $to = [
-            "name" => $toName,
-            "attn" => $order_info["shipping_firstname"] == NULL ? $order_info["payment_firstname"].' '.$order_info["payment_lastname"] : $order_info["shipping_firstname"].' '.$order_info["shipping_lastname"],
-            "address" => $order_info["shipping_address_1"] == NULL ? substr($order_info["payment_address_1"],0,28) : substr($order_info["shipping_address_1"],0,28),
-            "suite"=> $order_info["shipping_address_2"] == NULL ? $order_info["payment_address_2"] : $order_info["shipping_address_2"],
-            "city" => $order_info["shipping_city"] == NULL ? $order_info["payment_city"] : $order_info["shipping_city"],
-            "country" => $order_info["shipping_iso_code_2"] == NULL ? $order_info["payment_iso_code_2"] : $order_info["shipping_iso_code_2"],
-            "state" => $order_info["shipping_zone_code"] == NULL ? $order_info["payment_zone_code"] : $order_info["shipping_zone_code"],
-            "postal_code" => $order_info["shipping_postcode"] == NULL ? $order_info["payment_postcode"] : $order_info["shipping_postcode"],
+            "name" => substr($toName,0,29),
+            "attn" => substr($toAttn,0,20),
+            "address" => substr($toAddress,0,29),
+            "suite"=> substr($toSuite,0,17),
+            "city" => substr($toCity,0,29),
+            "country" => $toCountry,
+            "state" => $toState,
+            "postal_code" => $toPostalCode,
             "phone" => $order_info["telephone"],
             "is_commercial"=>"false"
         ];
@@ -317,7 +334,7 @@ class ControllerExtensionShippingflagship extends Controller {
                     'length' => ceil($packing->length),
                     'width' => ceil($packing->width),
                     'height' => ceil($packing->height),
-                    'weight' => $packing->weight,
+                    'weight' => max($packing->weight,1),
                     'description' => $packing->box_model
                 ];
             }
@@ -325,11 +342,21 @@ class ControllerExtensionShippingflagship extends Controller {
         return $packingPackages;
     }
     protected function getItemDetails(array $orderProduct,int $imperialLengthClass,int $imperialWeightClass) : array {
+
+        $length = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                        $this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["length"];
+        $width = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                        $this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["width"];
+        $height = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                        $this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["height"];
+        $weight = $orderProduct["weight_class_id"] != $imperialWeightClass ? 
+                    $this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass) : 
+                    $orderProduct["weight"];
         return [
-                "length" => $orderProduct["length"] == 0 ? 1 : ($orderProduct["length_class_id"] != $imperialLengthClass ? ceil($this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass)) : ceil($orderProduct["length"]) ),
-                "width"  => $orderProduct["width"] == 0 ? 1 : ($orderProduct["length_class_id"] != $imperialLengthClass ? ceil($this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass)) : ceil($orderProduct["width"])),
-                "height" => $orderProduct["height"] == 0 ? 1 : ($orderProduct["length_class_id"] != $imperialLengthClass ? ceil($this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass)) : ceil($orderProduct["height"])),
-                "weight" =>$orderProduct["weight"] == 0 ? 1 : ($orderProduct["weight_class_id"] != $imperialWeightClass ? $this->length->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass) : $orderProduct["weight"]),
+                "length" => $length,
+                "width"  => $width,
+                "height" => $height,
+                "weight" => $weight,
                 "description" => $orderProduct["name"]
             ];
     }
@@ -350,7 +377,7 @@ class ControllerExtensionShippingflagship extends Controller {
         if (!utf8_strlen($this->request->post['shipping_flagship_markup'])) {
             $this->error['shipping_flagship_markup'] = true;
         }
-		if (!utf8_strlen($this->request->post['shipping_flagship_residential'])) {
+        if (!utf8_strlen($this->request->post['shipping_flagship_residential'])) {
             $this->error['shipping_flagship_residential'] = true;
         }
         return empty($this->error);
@@ -386,11 +413,11 @@ class ControllerExtensionShippingflagship extends Controller {
         return empty($this->config->get('shipping_flagship_token')) ? false : true ;
     }
 
-	protected function getAvailableServices() : ?array {
-		if(!$this->isTokenSet()){
-			return NULL;
-		}
-		$availableServicesArray = [];
+    protected function getAvailableServices() : ?array {
+        if(!$this->isTokenSet()){
+            return NULL;
+        }
+        $availableServicesArray = [];
 
         $this->load->model('extension/shipping/flagship');
         $availableServices = $this->model_extension_shipping_flagship->getAvailableServices() == NULL ? [] : $this->model_extension_shipping_flagship->getAvailableServices();
@@ -401,8 +428,8 @@ class ControllerExtensionShippingflagship extends Controller {
         foreach ($availableServices as $key => $courier) {
             $availableServicesArray = $this->prepareAvailableServices($key,$courier,$selectedCouriers,$availableServicesArray);
         }
-		return $availableServicesArray;
-	}
+        return $availableServicesArray;
+    }
 
     protected function prepareAvailableServices(string $key,array $courier,array $selectedCouriers,array $availableServicesArray) : array {
 

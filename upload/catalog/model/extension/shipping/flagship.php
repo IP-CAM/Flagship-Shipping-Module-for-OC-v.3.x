@@ -138,7 +138,7 @@ class ModelExtensionShippingflagship extends Model {
             return $this->checkPackings($packings);
         } catch(PackingException $e){
             $this->session->data['error'] = $e->getMessage();
-			return [];
+            return [];
         }
     }
     protected function checkPackings($packings) : array {
@@ -191,16 +191,25 @@ class ModelExtensionShippingflagship extends Model {
         $products = $this->cart->getProducts();
         $imperialLengthClass = $this->getImperialLengthClass();
         $imperialWeightClass = $this->getImperialWeightClass();
-        foreach ($products as $product) {
-            for($i=0; $i < $product['quantity']; $i++){
-		$items[] = [
-			"length" => $product["length"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["length"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["length"]) ),
-			"width" => $product["width"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["width"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["width"])),
-			"height" => $product["height"] == 0 ? 1 : ($product['length_class_id'] != $imperialLengthClass ? ceil($this->length->convert($product["height"],$product['length_class_id'],$imperialLengthClass)) : ceil($product["height"])),
-			"weight" => $product["weight"] < 1 ? 1 : ($product['weight_class_id'] != $imperialWeightClass ? $this->weight->convert($product["weight"],$product['weight_class_id'],$imperialWeightClass) : $product["weight"]/$product['quantity']),
-			"description" => $product["name"]
-	    	];	
-            }	
+        
+        foreach ($products as $orderProduct) {
+            $length = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                        $this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["length"];
+            $width = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                            $this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["width"];
+            $height = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                            $this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["height"];
+            $weight = $orderProduct["weight_class_id"] != $imperialWeightClass ? 
+                    $this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass) : 
+                    $orderProduct["weight"];
+
+            $items[] = [
+                "length" => $length,
+                "width" => $width,
+                "height" => $height,
+                "weight" => $weight,
+                "description" => $orderProduct["name"]
+            ];
         }
         return $items;
     }

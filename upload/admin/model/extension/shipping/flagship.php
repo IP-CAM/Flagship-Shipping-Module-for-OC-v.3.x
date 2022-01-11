@@ -55,7 +55,7 @@ class ModelExtensionShippingflagship extends Model{
         $url = $this->config->get('smartship_api_url').'/ship/shipments/'.$flagship_shipment_id;
         $token = $this->config->get('shipping_flagship_token');
 
-        $shipment = $this->apiRequest($url,$payload,$token,'PUT',30,'1.0.5',$orderId,$orderLink);
+        $shipment = $this->apiRequest($url,$payload,$token,'PUT',30,'1.0.7',$orderId,$orderLink);
         return $shipment["response"]->content;
     }
 
@@ -147,7 +147,7 @@ class ModelExtensionShippingflagship extends Model{
     public function prepareShipment(array $payload, int $orderId, string $orderLink) : \stdClass {
         $url = $this->config->get('smartship_api_url').'/ship/prepare';
         $token = $this->config->get('shipping_flagship_token');
-        $shipment = $this->apiRequest($url,$payload,$token,'POST',30,'1.0.5',$orderId,$orderLink);
+        $shipment = $this->apiRequest($url,$payload,$token,'POST',30,'1.0.7',$orderId,$orderLink);
         return $shipment["response"]->content;
     }
 
@@ -200,7 +200,7 @@ class ModelExtensionShippingflagship extends Model{
         $url = $this->config->get('smartship_api_url').'/ship/shipments/'.$shipment_id;
         $token = $this->config->get('shipping_flagship_token');
 
-        $shipment = $this->apiRequest($url,[],$token,'GET',10,'1.0.5',$orderId);
+        $shipment = $this->apiRequest($url,[],$token,'GET',10,'1.0.7',$orderId);
         $status = $shipment["response"]->content->status;
         return $status;
     }
