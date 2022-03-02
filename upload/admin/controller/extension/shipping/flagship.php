@@ -353,10 +353,10 @@ class ControllerExtensionShippingflagship extends Controller {
                     $this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass) : 
                     $orderProduct["weight"];
         return [
-                "length" => $length,
-                "width"  => $width,
-                "height" => $height,
-                "weight" => $weight,
+                "length" => ceil($length),
+                "width"  => ceil($width),
+                "height" => ceil($height),
+                "weight" => max($weight,1),
                 "description" => $orderProduct["name"]
             ];
     }
