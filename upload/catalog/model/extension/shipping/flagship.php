@@ -78,8 +78,8 @@ class ModelExtensionShippingflagship extends Model
         return  array_key_exists("response", $response) ? $response["response"]->content : [];
     }
 
-    protected function apiRequest(string $url, array $json, string $apiToken, string $method, int $timeout, string $flagshipFor = 'OpenCart', string $version = '1.0.0'): array
-    {
+
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.9') : array {
 
         $curl = curl_init();
         $options = [
@@ -137,7 +137,7 @@ class ModelExtensionShippingflagship extends Model
             "is_commercial" => false
         ];
         $packages = [
-            "items" => $this->getPackageItems(),
+            "items" => $this->config->get('shipping_flagship_packing') == 1 ? $this->getPackageItems() : $this->getItems(),
             "units" => 'imperial',
             "type" => "package",
             "content" => "goods"
@@ -183,10 +183,10 @@ class ModelExtensionShippingflagship extends Model
         }
         foreach ($packings as $packing) {
             $packageItems[] = [
-                "length" => $packing->length,
-                "width" => $packing->width,
-                "height" => $packing->height,
-                "weight" => $packing->weight,
+                "length" => ceil($packing->length),
+                "width" => ceil($packing->width),
+                "height" => ceil($packing->height),
+                "weight" => max($packing->weight,1),
                 "description" => $packing->box_model
             ];
         }
@@ -233,19 +233,20 @@ class ModelExtensionShippingflagship extends Model
 
         foreach ($products as $orderProduct) {
             for ($i = 0; $i < $orderProduct['quantity']; $i++) {
-                $length = $orderProduct["length_class_id"] != $imperialLengthClass ?
-                $this->length->convert($orderProduct["length"], $orderProduct["length_class_id"], $imperialLengthClass) : $orderProduct["length"];
-            $width = $orderProduct["length_class_id"] != $imperialLengthClass ?
-                $this->length->convert($orderProduct["width"], $orderProduct["length_class_id"], $imperialLengthClass) : $orderProduct["width"];
-            $height = $orderProduct["length_class_id"] != $imperialLengthClass ?
-                $this->length->convert($orderProduct["height"], $orderProduct["length_class_id"], $imperialLengthClass) : $orderProduct["height"];
-            $weight = $orderProduct["weight_class_id"] != $imperialWeightClass ?
-                $this->weight->convert($orderProduct["weight"], $orderProduct["weight_class_id"], $imperialWeightClass) :
-                $orderProduct["weight"];
+                $length = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                        $this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["length"];
+                $width = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                            $this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["width"];
+                $height = $orderProduct["length_class_id"] != $imperialLengthClass ? 
+                            $this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["height"];
+                $weight = $orderProduct["weight_class_id"] != $imperialWeightClass ? 
+                    $this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass) : 
+                    $orderProduct["weight"];
+
                 $items[] = [
-                    "length" => $length,
-                    "width" => $width,
-                    "height" => $height,
+                    "length" => ceil($length),
+                    "width" => ceil($width),
+                    "height" => ceil($height),
                     "weight" => $weight,
                     "description" => $orderProduct["name"]
                 ];

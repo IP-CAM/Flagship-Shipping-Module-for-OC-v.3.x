@@ -2,7 +2,7 @@
 <modification>
     <code>flagship</code>
     <name>FlagShip Modification</name>
-    <version>1.0.0</version>
+    <version>1.0.9</version>
     <author>FlagShip Courier Solutions</author>
     <link>https://www.flagshipcompany.com</link>
     <file path="admin/controller/sale/order.php">
@@ -37,7 +37,7 @@
                     {% if flagshipId == 0 %}
                         <a href="{{prepareshipment}}" class="btn btn-info"><i class="fa fa-location-arrow"></i> Send To FlagShip</a>
                     {% else %}
-                        {% if flagshipShipmentStatus == 'prequoted' %}
+                        {% if flagshipShipmentStatus == 'prequoted' or flagshipShipmentStatus is empty %}
                             <a href="{{ confirmshipment }}" data-toggle="tooltip" title="Confirm FlagShip Shipment" class="btn btn-info"><i class="fa fa-location-arrow"></i> Confirm FlagShip Shipment {{ flagship_shipment_id }}</a>
                             <a href="{{ updateshipment }}" data-toggle="tooltip" title="Update FlagShip" class="btn btn-info"><i class="fa fa-location-arrow"></i> Update FlagShip</a>
                         {% else %}
