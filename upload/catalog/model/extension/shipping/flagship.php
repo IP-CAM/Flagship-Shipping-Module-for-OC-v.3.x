@@ -61,7 +61,7 @@ class ModelExtensionShippingflagship extends Model {
         return  array_key_exists("response", $response) ? $response["response"]->content : [];
     }
 
-    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.0') : array {
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.9') : array {
 
         $curl = curl_init();
         $options = [
