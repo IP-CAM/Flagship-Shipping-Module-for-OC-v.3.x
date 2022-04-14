@@ -196,7 +196,7 @@ class ModelExtensionShippingflagship extends Model{
         return TRUE;
     }
 
-    protected function getFlagshipShipmentStatus(int $shipment_id, int $orderId) : string {
+    protected function getFlagshipShipmentStatus(int $shipment_id, int $orderId) : ?string {
         $url = $this->config->get('smartship_api_url').'/ship/shipments/'.$shipment_id;
         $token = $this->config->get('shipping_flagship_token');
 

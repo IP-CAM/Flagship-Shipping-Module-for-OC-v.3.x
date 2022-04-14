@@ -155,10 +155,10 @@ class ModelExtensionShippingflagship extends Model {
         }
         foreach ($packings as $packing) {
             $packageItems[] = [
-                "length" => $packing->length,
-                "width" => $packing->width,
-                "height" => $packing->height,
-                "weight" => $packing->weight,
+                "length" => ceil($packing->length),
+                "width" => ceil($packing->width),
+                "height" => ceil($packing->height),
+                "weight" => max($packing->weight,1),
                 "description" => $packing->box_model
             ];
         }
@@ -204,9 +204,9 @@ class ModelExtensionShippingflagship extends Model {
                     $orderProduct["weight"];
 
             $items[] = [
-                "length" => $length,
-                "width" => $width,
-                "height" => $height,
+                "length" => ceil($length),
+                "width" => ceil($width),
+                "height" => ceil($height),
                 "weight" => $weight,
                 "description" => $orderProduct["name"]
             ];
