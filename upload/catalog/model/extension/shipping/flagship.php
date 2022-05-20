@@ -17,9 +17,7 @@ class ModelExtensionShippingflagship extends Model
             $cost = $rate->price->total;
             $cost += ($markup / 100) * $cost;
             $cost += $flatFee;
-            if (!empty($this->config->get('shipping_flagship_tax_class_id')) and $this->config->get('shipping_flagship_tax_class_id')) {
-                $cost = $this->tax->calculate($this->currency->convert($cost, $this->session->data['currency'], $this->config->get('config_currency')), $this->config->get('shipping_flagship_tax_class_id'), 1);
-            }
+            
             $quote_data[$rate->service->courier_name . '_' . $rate->service->courier_desc . '_' . $rate->service->courier_code] = [
                 'code'         => 'flagship.' . $rate->service->courier_name . '_' . $rate->service->courier_desc . '_' . $rate->service->courier_code,
                 'title'        => $rate->service->courier_name == 'FedEx' ? $rate->service->courier_name . ' ' . $rate->service->courier_desc : $rate->service->courier_desc,
