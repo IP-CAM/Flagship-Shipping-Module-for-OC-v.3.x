@@ -14,7 +14,7 @@ class ModelExtensionShippingflagship extends Model
         $markup = $this->config->get('shipping_flagship_markup');
 
         foreach ($rates as $rate) {
-            $cost = $rate->price->total;
+            $cost = $rate->price->subtotal;
             $cost += ($markup / 100) * $cost;
             $cost += $flatFee;
             
