@@ -183,7 +183,7 @@ class ControllerExtensionShippingflagship extends Controller {
         $data['column_left'] = $this->load->controller('common/column_left');
         $data['footer'] = $this->load->controller('common/footer');
         $flagship_shipment_id = $this->getFlagshipShipmentId();
-        $data['flagship_url'] = $this->config->get('smartship_web_url').'/dashboard';
+        $data['flagship_url'] = $this->config->get('smartship_web_url').'/shipping/manage';
         $data['cancel'] = $this->url->link('sale/order/info', 'user_token=' . $this->session->data['user_token'] . '&order_id=' . (int)$this->request->get['order_id'], true);
         $this->response->setOutput($this->load->view('extension/shipping/flagship_confirm_shipment', $data));
         return 0;
