@@ -106,8 +106,14 @@ class ModelExtensionShippingflagship extends Model
         ];
         curl_close($curl);
 
-        if (isset($responseArray['response']->errors)) {
-            $errors = implode(PHP_EOL, $responseArray['response']->errors);
+        if (isset($responseArray['response']->errors) and empty($responseArray['response']->content)) {
+            $errors = '';
+            foreach ($responseArray['response']->errors as $key => $error) {
+                foreach ($error as $message) {
+                    $errors .= PHP_EOL . $key . ' : ' . $message;
+                }
+            }
+
             return ['errors' => $errors];
         }
 
