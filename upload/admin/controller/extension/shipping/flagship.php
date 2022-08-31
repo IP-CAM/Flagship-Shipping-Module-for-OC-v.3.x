@@ -344,11 +344,11 @@ class ControllerExtensionShippingflagship extends Controller {
     protected function getItemDetails(array $orderProduct,int $imperialLengthClass,int $imperialWeightClass) : array {
 
         $length = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                        $this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["length"];
+                        max($this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["length"],1);
         $width = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                        $this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["width"];
+                        max($this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["width"],1);
         $height = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                        $this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["height"];
+                        max($this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["height"],1);
         $weight = $orderProduct["weight_class_id"] != $imperialWeightClass ? 
                     $this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass) : 
                     $orderProduct["weight"];

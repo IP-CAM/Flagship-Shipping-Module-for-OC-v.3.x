@@ -8,6 +8,7 @@ class ModelExtensionShippingflagship extends Model
         $this->load->language('extension/shipping/flagship');
         $method_data = [];
         $quote_data = [];
+        $error = '';
 
         $rates = $this->getRatesArray($address);
         $flatFee = $this->config->get('shipping_flagship_fee');
@@ -27,7 +28,7 @@ class ModelExtensionShippingflagship extends Model
             ];
         }
 
-        if ($this->session->data['error']) {
+        if (isset($this->session->data['error'])) {
             $quote_data = [];
             $error = $this->session->data['error'];
             unset($this->session->data['error']);
@@ -45,7 +46,6 @@ class ModelExtensionShippingflagship extends Model
 
     protected function getRatesArray($address): array
     {
-
         $ratesArray = [];
         $selectedCouriers = $this->getSelectedCouriers();
         $selectedRates = count($selectedCouriers) > 0 ? explode(",", $selectedCouriers[0]["value"]) : [];
@@ -106,14 +106,8 @@ class ModelExtensionShippingflagship extends Model
         ];
         curl_close($curl);
 
-        if (isset($responseArray['response']->errors) and empty($responseArray['response']->content)) {
-            $errors = '';
-            foreach ($responseArray['response']->errors as $key => $error) {
-                foreach ($error as $message) {
-                    $errors .= PHP_EOL . $key . ' : ' . $message;
-                }
-            }
-
+        if (isset($responseArray['response']->errors)) {
+            $errors = implode(PHP_EOL, $responseArray['response']->errors);
             return ['errors' => $errors];
         }
 
@@ -159,6 +153,7 @@ class ModelExtensionShippingflagship extends Model
             "payment" => $payment,
             "options" => $options
         ];
+
         return $payload;
     }
     protected function getPackageItems(): array
@@ -238,14 +233,14 @@ class ModelExtensionShippingflagship extends Model
         foreach ($products as $orderProduct) {
             for ($i = 0; $i < $orderProduct['quantity']; $i++) {
                 $length = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                        $this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["length"];
+                        max($this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["length"],1);
                 $width = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                            $this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["width"];
+                            max($this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["width"],1);
                 $height = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                            $this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass) : $orderProduct["height"];
+                            max($this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["height"],1);
                 $weight = $orderProduct["weight_class_id"] != $imperialWeightClass ? 
-                    $this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass) : 
-                    $orderProduct["weight"];
+                    max($this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass),1) : 
+                    max($orderProduct["weight"],1);
 
                 $items[] = [
                     "length" => ceil($length),
