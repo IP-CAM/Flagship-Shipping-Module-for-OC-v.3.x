@@ -39,7 +39,7 @@
                     {% else %}
                         {% if flagshipShipmentStatus == 'prequoted' or flagshipShipmentStatus is empty %}
                             <a href="{{ confirmshipment }}" data-toggle="tooltip" title="Confirm FlagShip Shipment" class="btn btn-info"><i class="fa fa-location-arrow"></i> Confirm FlagShip Shipment {{ flagship_shipment_id }}</a>
-                            <a href="{{ updateshipment }}" data-toggle="tooltip" title="Update FlagShip" class="btn btn-info"><i class="fa fa-location-arrow"></i> Update FlagShip</a>
+                            <a href="{{ updateshipment }}" data-toggle="tooltip" title="Update Shipment" class="btn btn-info"><i class="fa fa-location-arrow"></i> Update Shipment</a>
                         {% else %}
                             <button class="btn btn-success">FlagShip Shipment {{flagshipId}} is Confirmed</button>
                         {% endif %}
