@@ -77,7 +77,7 @@ class ModelExtensionShippingflagship extends Model
     }
 
 
-    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.11') : array {
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.12') : array {
 
         $curl = curl_init();
         $options = [
@@ -225,34 +225,13 @@ class ModelExtensionShippingflagship extends Model
 
     protected function getItems(): array
     {
+        $this->load->model('catalog/product');
         $items = [];
         $products = $this->cart->getProducts();
-        $imperialLengthClass = $this->getImperialLengthClass();
-        $imperialWeightClass = $this->getImperialWeightClass();
-
+       
         foreach ($products as $orderProduct) {
-            for ($i = 0; $i < $orderProduct['quantity']; $i++) {
-                $length = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                        max($this->length->convert($orderProduct["length"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["length"],1);
-                $width = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                            max($this->length->convert($orderProduct["width"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["width"],1);
-                $height = $orderProduct["length_class_id"] != $imperialLengthClass ? 
-                            max($this->length->convert($orderProduct["height"],$orderProduct["length_class_id"],$imperialLengthClass),1) : max($orderProduct["height"],1);
-                $weight = $orderProduct["weight_class_id"] != $imperialWeightClass ? 
-                    max($this->weight->convert($orderProduct["weight"],$orderProduct["weight_class_id"],$imperialWeightClass),1) : 
-                    max($orderProduct["weight"],1);
-
-                $items[] = [
-                    "length" => ceil($length),
-                    "width" => ceil($width),
-                    "height" => ceil($height),
-                    "weight" => $weight,
-                    "description" => $orderProduct["name"]
-                ];
-            }
+            $items = $this->getProductsByQuantity($items, $orderProduct);
         }
-
-
         return $items;
     }
     protected function getCountryCode(int $country_id): string
@@ -287,5 +266,33 @@ class ModelExtensionShippingflagship extends Model
     {
         $query = $this->db->query("SELECT value FROM `" . DB_PREFIX . "flagship_couriers` ");
         return $query->rows;
+    }
+
+    protected function getProductsByQuantity($items, $orderProduct) {
+        $imperialLengthClass = $this->getImperialLengthClass();
+        $imperialWeightClass = $this->getImperialWeightClass();
+
+        $product_id = ($orderProduct["product_id"]);
+        for ($i = 0; $i < $orderProduct['quantity']; $i++) {
+            $product = $this->model_catalog_product->getProduct($product_id);
+            $length = $product["length_class_id"] != $imperialLengthClass ? 
+                    max($this->length->convert($product["length"],$product["length_class_id"],$imperialLengthClass),1) : max($product["length"],1);
+            $width = $product["length_class_id"] != $imperialLengthClass ? 
+                        max($this->length->convert($product["width"],$product["length_class_id"],$imperialLengthClass),1) : max($product["width"],1);
+            $height = $product["length_class_id"] != $imperialLengthClass ? 
+                        max($this->length->convert($product["height"],$product["length_class_id"],$imperialLengthClass),1) : max($product["height"],1);
+            $weight = $product["weight_class_id"] != $imperialWeightClass ? 
+                max($this->weight->convert($product["weight"],$product["weight_class_id"],$imperialWeightClass),1) : 
+                max($product["weight"],1);
+
+            $items[] = [
+                "length" => ceil($length),
+                "width" => ceil($width),
+                "height" => ceil($height),
+                "weight" => $weight,
+                "description" => $orderProduct["name"]
+            ];
+        }
+        return $items;
     }
 }
