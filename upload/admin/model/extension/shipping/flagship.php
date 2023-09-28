@@ -55,7 +55,7 @@ class ModelExtensionShippingflagship extends Model{
         $url = $this->config->get('smartship_api_url').'/ship/shipments/'.$flagship_shipment_id;
         $token = $this->config->get('shipping_flagship_token');
 
-        $shipment = $this->apiRequest($url,$payload,$token,'PUT',30,'1.0.12',$orderId,$orderLink);
+        $shipment = $this->apiRequest($url,$payload,$token,'PUT',30,'1.0.13',$orderId,$orderLink);
         return $shipment["response"]->content;
     }
 
@@ -147,7 +147,7 @@ class ModelExtensionShippingflagship extends Model{
     public function prepareShipment(array $payload, int $orderId, string $orderLink) : \stdClass {
         $url = $this->config->get('smartship_api_url').'/ship/prepare';
         $token = $this->config->get('shipping_flagship_token');
-        $shipment = $this->apiRequest($url,$payload,$token,'POST',30,'1.0.12',$orderId,$orderLink);
+        $shipment = $this->apiRequest($url,$payload,$token,'POST',30,'1.0.13',$orderId,$orderLink);
         return $shipment["response"]->content;
     }
 
@@ -200,12 +200,12 @@ class ModelExtensionShippingflagship extends Model{
         $url = $this->config->get('smartship_api_url').'/ship/shipments/'.$shipment_id;
         $token = $this->config->get('shipping_flagship_token');
 
-        $shipment = $this->apiRequest($url,[],$token,'GET',10,'1.0.12',$orderId);
+        $shipment = $this->apiRequest($url,[],$token,'GET',10,'1.0.13',$orderId);
         $status = $shipment["response"]->content->status;
         return $status;
     }
 
-    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $version='1.0.12', int $orderId=0, string $orderLink='') : array {
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $version='1.0.13', int $orderId=0, string $orderLink='') : array {
 
         $curl = curl_init();
         $storeName = $this->config->get('config_name');
@@ -237,7 +237,10 @@ class ModelExtensionShippingflagship extends Model{
         ];
         curl_close($curl);
 
-        if(($httpcode >= 400 && $httpcode < 600) || ($httpcode === 0) || ($response === false) || ($httpcode === 209)){
+        if(($httpcode >= 400 && $httpcode < 600) || 
+            ($httpcode === 0) || 
+            ($response === false) || 
+            ($httpcode === 209)){
             return [];
         }
         return $responseArray;

@@ -18,6 +18,7 @@ $_['entry_residential'] = 'Residential Shipments';
 $_['entry_couriers'] = 'Select Couriers to show';
 $_['entry_test'] = 'Test Environment';
 $_['entry_packing'] = 'Packing API';
+$_['entry_tax'] = 'Tax class';
 // Error
 $_['error_permission'] = 'Warning: You do not have permission to modify FlagShip!';
 $_['error_shipping_flagship_postcode'] = 'Invalid Postcode';

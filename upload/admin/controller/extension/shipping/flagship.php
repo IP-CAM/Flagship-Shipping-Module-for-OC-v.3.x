@@ -79,6 +79,9 @@ class ControllerExtensionShippingflagship extends Controller {
         $data['action_couriers'] = $this->url->link('extension/shipping/flagship/couriers', 'user_token=' . $this->session->data['user_token'], true);
         $data['test_token_check'] = $this->checkIfTokenIsTestToken();
 
+        $this->load->model('localisation/tax_class');
+		$data['tax_classes'] = $this->model_localisation_tax_class->getTaxClasses();
+        $data['shipping_flagship_tax_class_id'] = $this->config->get('shipping_flagship_tax_class_id');
 
         if (isset($this->request->post['shipping_flagship_postcode'])) {
             $data['shipping_flagship_postcode'] = $this->request->post['shipping_flagship_postcode'];
@@ -172,6 +175,7 @@ class ControllerExtensionShippingflagship extends Controller {
         $shipment = $this->model_extension_shipping_flagship->updateShipment($flagship_shipment_id,$payload,$order_id,$orderLink);
 
         $this->response->redirect($orderLink);
+        return 0;
     }
 
     public function confirmShipment() : int {

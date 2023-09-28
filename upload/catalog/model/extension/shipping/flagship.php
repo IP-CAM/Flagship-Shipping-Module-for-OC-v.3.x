@@ -28,7 +28,7 @@ class ModelExtensionShippingflagship extends Model
             ];
         }
 
-        if (isset($this->session->data['error'])) {
+        if (array_key_exists('error', $this->session->data) && isset($this->session->data['error'])) {
             $quote_data = [];
             $error = $this->session->data['error'];
             unset($this->session->data['error']);
@@ -77,7 +77,7 @@ class ModelExtensionShippingflagship extends Model
     }
 
 
-    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.12') : array {
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.13') : array {
 
         $curl = curl_init();
         $options = [
