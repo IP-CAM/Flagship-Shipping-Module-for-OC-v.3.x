@@ -107,8 +107,8 @@ class ModelExtensionShippingflagship extends Model
         curl_close($curl);
 
         if (isset($responseArray['response']->errors)) {
-            $errors = implode(PHP_EOL, $responseArray['response']->errors);
-            return ['errors' => $errors];
+            $errorsStr = $this->normalizeErrors($responseArray['response']->errors);
+            return ['errors' => $errorsStr];
         }
 
         if (($httpcode >= 400 && $httpcode < 600) || ($httpcode === 0) || ($response === false) || ($httpcode === 209)) {
@@ -294,5 +294,12 @@ class ModelExtensionShippingflagship extends Model
             ];
         }
         return $items;
+    }
+
+    protected function normalizeErrors($errors)
+    {
+        $errorsStr = json_encode($errors);
+        $errorsStr = str_replace(['[',']','"',','],['','','',PHP_EOL], $errorsStr);
+        return $errorsStr;
     }
 }
