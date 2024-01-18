@@ -77,7 +77,7 @@ class ModelExtensionShippingflagship extends Model
     }
 
 
-    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.13') : array {
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.14') : array {
 
         $curl = curl_init();
         $options = [
