@@ -77,7 +77,7 @@ class ModelExtensionShippingflagship extends Model
     }
 
 
-    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='OpenCart',string $version='1.0.14') : array {
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='Opencart',string $version='1.0.15') : array {
 
         $curl = curl_init();
         $options = [
@@ -105,6 +105,10 @@ class ModelExtensionShippingflagship extends Model
             "httpcode"  => $httpcode
         ];
         curl_close($curl);
+
+        if(count($json['packages']['items']) > 1) {
+            unset($responseArray['response']->errors->canadapost);
+        }
 
         if (isset($responseArray['response']->errors)) {
             $errorsStr = $this->normalizeErrors($responseArray['response']->errors);
@@ -293,7 +297,7 @@ class ModelExtensionShippingflagship extends Model
                 "description" => $orderProduct["name"]
             ];
         }
-        return $items;
+        return $items;  
     }
 
     protected function normalizeErrors($errors)
