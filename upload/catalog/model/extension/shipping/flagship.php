@@ -77,7 +77,7 @@ class ModelExtensionShippingflagship extends Model
     }
 
 
-    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='Opencart',string $version='1.0.15') : array {
+    protected function apiRequest(string $url,array $json, string $apiToken,string $method, int $timeout, string $flagshipFor='Opencart',string $version='1.0.16') : array {
 
         $curl = curl_init();
         $options = [
@@ -106,18 +106,20 @@ class ModelExtensionShippingflagship extends Model
         ];
         curl_close($curl);
 
-        if(count($json['packages']['items']) > 1) {
+        if (stristr($url, '/ship/rates') !== false && isset($responseArray['response']->errors)) {
             unset($responseArray['response']->errors->canadapost);
         }
 
-        if (isset($responseArray['response']->errors)) {
+        if (count((array)$responseArray['response']->errors) > 0) {
             $errorsStr = $this->normalizeErrors($responseArray['response']->errors);
             return ['errors' => $errorsStr];
         }
 
-        if (($httpcode >= 400 && $httpcode < 600) || ($httpcode === 0) || ($response === false) || ($httpcode === 209)) {
+        if (($httpcode >= 400 && $httpcode < 600) || ($httpcode === 0) 
+            || ($response === false) || ($httpcode === 209)) {
             return [];
         }
+
         return $responseArray;
     }
 
